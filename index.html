@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AP Co-Pilot | Sarvam AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0A0912;--p:rgba(255,255,255,.045);--p2:rgba(255,255,255,.08);--line:rgba(255,255,255,.1);--ink:#F2F0FA;--mut:#9A97B0;
+--saf:#FF9B3D;--vio:#7C6CFF;--ok:#35E0B0;--bad:#FF5C7A;--warn:#FFC857;
+--d:'Manrope','Segoe UI',system-ui,sans-serif;--b:'Manrope','Segoe UI',system-ui,sans-serif;--m:'JetBrains Mono',ui-monospace,Menlo,Consolas,monospace}
+*{box-sizing:border-box;margin:0}
+body{font-family:var(--b);background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.5;overflow-x:hidden}
+:focus-visible{outline:2px solid var(--saf);outline-offset:2px}
+.aur{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none}
+.aur i{position:absolute;border-radius:50%;filter:blur(110px);opacity:.38;animation:drift 22s ease-in-out infinite alternate}
+.aur i:nth-child(1){width:560px;height:560px;background:var(--vio);top:-180px;left:-120px}
+.aur i:nth-child(2){width:480px;height:480px;background:var(--saf);top:20%;right:-160px;opacity:.26;animation-delay:-8s}
+.aur i:nth-child(3){width:420px;height:420px;background:#2BB6D6;bottom:-200px;left:30%;opacity:.2;animation-delay:-14s}
+@keyframes drift{to{transform:translate(70px,50px) scale(1.15)}}
+.wrap{max-width:1240px;margin:0 auto;padding:0 28px}
+nav{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 0}
+.brand{display:flex;align-items:center;gap:12px;font:800 17px var(--d);letter-spacing:-.01em}
+.mark{width:38px;height:38px;border-radius:12px;background:conic-gradient(from 200deg,var(--saf),var(--vio),var(--saf));display:grid;place-items:center;font-size:14px;color:#fff;box-shadow:0 0 28px rgba(255,155,61,.4)}
+.mark span{background:var(--bg);width:30px;height:30px;border-radius:9px;display:grid;place-items:center}
+.pills{display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:#cfcbe6;background:var(--p);border:1px solid var(--line);padding:6px 13px;border-radius:99px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(53,224,176,.6);animation:pulse 2s infinite}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(53,224,176,0)}100%{box-shadow:0 0 0 0 rgba(53,224,176,0)}}
+.hero{padding:34px 0 22px}
+.hero h1{font:800 clamp(28px,4vw,48px)/1.1 var(--d);letter-spacing:-.03em;max-width:14em;background:linear-gradient(100deg,#fff 30%,var(--saf) 70%,var(--vio));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{margin-top:14px;color:var(--mut);font-size:17px;max-width:36em}
+.grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:22px;padding-bottom:60px;align-items:start}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+.card{background:var(--p);border:1px solid var(--line);border-radius:22px;backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+.col{display:grid;gap:22px}
+.ch{display:flex;justify-content:space-between;align-items:center;padding:18px 22px 0;gap:10px}
+.ch h2{font:700 15px var(--d);letter-spacing:-.01em}
+.ch small{color:var(--mut);font-size:13px}
+/* dropzone */
+.drop{position:relative;margin:16px 22px 22px;border-radius:18px;border:1.5px dashed rgba(255,255,255,.2);padding:34px 20px 28px;text-align:center;transition:.25s;overflow:hidden}
+.drop:hover,.drop.over{border-color:var(--saf);background:rgba(255,155,61,.07)}
+.drop input{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.orb{position:relative;width:112px;height:112px;margin:0 auto 20px;display:grid;place-items:center}
+.orb::before,.orb::after{content:"";position:absolute;inset:0;border-radius:50%;border:1.5px solid var(--saf);opacity:.5;animation:ring 3s ease-out infinite}
+.orb::after{animation-delay:1.5s;border-color:var(--vio)}
+@keyframes ring{from{transform:scale(.55);opacity:.7}to{transform:scale(1.15);opacity:0}}
+.orb b{width:62px;height:62px;border-radius:50%;background:linear-gradient(135deg,var(--saf),var(--vio));display:grid;place-items:center;box-shadow:0 0 34px rgba(124,108,255,.55);transition:transform .25s}
+.drop:hover .orb b,.drop.over .orb b{transform:scale(1.12)}
+.orb svg{width:28px;height:28px;color:#fff}
+.drop h3{font:700 17px var(--d);letter-spacing:-.01em}
+.drop p{font-size:14px;color:var(--mut);margin-top:4px}
+.chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+.chip{font-size:12px;font-weight:600;color:#cfcbe6;background:var(--p2);border-radius:99px;padding:4px 11px}
+/* log */
+.log{margin:14px 22px 22px;background:rgba(0,0,0,.35);border:1px solid var(--line);border-radius:14px;padding:14px 16px;font:12.5px/1.8 var(--m);min-height:150px;max-height:190px;overflow:auto;color:#bdb9d6}
+.log .ln{animation:in .3s}
+@keyframes in{from{opacity:0;transform:translateY(4px)}}
+.log .t{color:var(--vio)}.log .g{color:var(--ok)}.log .r{color:var(--bad)}.log .y{color:var(--warn)}
+.cur::after{content:"▍";color:var(--saf);animation:bl 1s steps(2) infinite}
+@keyframes bl{50%{opacity:0}}
+/* queue */
+.q{list-style:none;padding:12px 14px 16px;display:grid;gap:6px;max-height:300px;overflow:auto}
+.qi{display:flex;align-items:center;gap:12px;width:100%;text-align:left;background:none;border:1px solid transparent;color:inherit;font:inherit;padding:10px 12px;border-radius:12px;cursor:pointer}
+.qi:hover{background:var(--p)}.qi.on{background:var(--p2);border-color:var(--line)}
+.qi .n{flex:1;min-width:0}.qi .n b{display:block;font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.qi .n small{color:var(--mut);font-size:12px}
+.st{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:99px;flex:none}
+.st.ok{background:rgba(53,224,176,.15);color:var(--ok)}.st.bad{background:rgba(255,92,122,.15);color:var(--bad)}
+.st.warn{background:rgba(255,200,87,.15);color:var(--warn)}.st.wait{background:var(--p2);color:var(--mut)}
+.st.run{background:rgba(124,108,255,.2);color:#b6acff}
+.none{padding:22px;color:var(--mut);font-size:14px;text-align:center}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media(max-width:560px){.stats{grid-template-columns:repeat(2,1fr)}}
+.stat{padding:16px 18px}
+.stat b{display:block;font:800 24px/1 var(--d);letter-spacing:-.03em}
+.stat span{font-size:12.5px;color:var(--mut)}
+/* report */
+.rb{padding:18px 22px 24px}
+.tabs{display:flex;gap:4px;background:rgba(0,0,0,.3);padding:4px;border-radius:12px;width:max-content;max-width:100%;overflow-x:auto;margin-bottom:18px}
+.tab{background:none;border:0;color:var(--mut);font:600 13px var(--b);padding:7px 14px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.tab.on{background:var(--p2);color:var(--ink)}
+.acts{display:flex;gap:8px;flex-wrap:wrap}
+.btn{background:var(--p2);border:1px solid var(--line);color:var(--ink);font:600 12.5px var(--b);padding:7px 12px;border-radius:10px;cursor:pointer}
+.btn:hover{border-color:var(--saf)}
+.vd{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;padding:20px;border-radius:18px;border:1px solid var(--line)}
+.vd.ok{background:linear-gradient(120deg,rgba(53,224,176,.14),transparent)}.vd.bad{background:linear-gradient(120deg,rgba(255,92,122,.16),transparent)}.vd.warn{background:linear-gradient(120deg,rgba(255,200,87,.14),transparent)}
+.ring{position:relative;width:96px;height:96px}
+.ring svg{width:96px;height:96px;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.ring .bg{stroke:rgba(255,255,255,.1)}
+.ok .ring .fg{stroke:var(--ok)}.bad .ring .fg{stroke:var(--bad)}.warn .ring .fg{stroke:var(--warn)}
+.ring .fg{transition:stroke-dashoffset 1s}
+.ring div{position:absolute;inset:0;display:grid;place-items:center;font:800 18px var(--d)}
+.vd h3{font:800 20px/1.2 var(--d);letter-spacing:-.02em}
+.vd p{margin-top:6px;font-size:15px;color:#d8d5ec}
+.vd small{display:block;color:var(--mut);font-size:12px;margin-top:6px}
+.act{margin-top:12px;display:inline-block;font-weight:700;font-size:14px;background:rgba(255,255,255,.1);border-radius:10px;padding:7px 13px}
+.hl{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:10px;margin-top:14px}
+.hl div{background:var(--p);border:1px solid var(--line);border-radius:14px;padding:12px 14px;min-width:0}
+.hl small{color:var(--mut);font-size:12px}.hl b{display:block;font-size:15px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+dl{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+dt,dd{padding:11px 16px;border-bottom:1px solid var(--line);font-size:14px;overflow-wrap:anywhere}
+dt{color:var(--mut);background:rgba(255,255,255,.03)}dd{font-weight:600}
+dt:nth-last-of-type(1),dd:nth-last-of-type(1){border-bottom:0}
+.sc{overflow-x:auto;border:1px solid var(--line);border-radius:14px;margin-bottom:14px}
+table{border-collapse:collapse;width:100%;font-size:14px}
+th{text-align:left;color:var(--mut);font-weight:600;background:rgba(255,255,255,.03)}
+th,td{padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap}tr:last-child td{border-bottom:0}
+pre{background:rgba(0,0,0,.4);border:1px solid var(--line);border-radius:14px;padding:16px;font:12.5px/1.6 var(--m);color:#9be8cf;overflow:auto;max-height:420px}
+iframe{width:100%;height:480px;border:1px solid var(--line);border-radius:14px;background:#fff}
+h4{font:700 14px var(--d);margin:4px 0 10px}
+/* pipeline + empty */
+.pipe{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:6px 0 20px}
+.nd{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--mut);padding:8px 14px;border-radius:99px;border:1px solid var(--line)}
+.nd.on{color:var(--ink);border-color:var(--saf);background:rgba(255,155,61,.12)}
+.nd.dn{color:var(--ok);border-color:rgba(53,224,176,.4)}
+.ar{color:var(--mut)}
+.sk{height:14px;border-radius:7px;background:linear-gradient(90deg,var(--p) 25%,var(--p2) 50%,var(--p) 75%);background-size:200% 100%;animation:sh 1.4s linear infinite;margin-bottom:12px}
+@keyframes sh{to{background-position:-200% 0}}
+.feat{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;padding:6px 22px 24px}
+.feat div{background:var(--p);border:1px solid var(--line);border-radius:16px;padding:16px}
+.feat em{font-style:normal;font-size:22px}.feat b{display:block;font:700 14px var(--d);margin:6px 0 2px}.feat span{font-size:13px;color:var(--mut)}
+.eb{margin:14px;padding:14px 16px;border-radius:14px;background:rgba(255,92,122,.12);border:1px solid rgba(255,92,122,.35);color:#ffc2cd;font-size:14px}
+.toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);background:#fff;color:#111;font-weight:600;font-size:14px;padding:10px 18px;border-radius:12px;opacity:0;transition:.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateX(-50%)}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="aur" aria-hidden="true"><i></i><i></i><i></i></div>
+<div class="wrap">
+  <nav>
+    <div class="brand"><div class="mark"><span>AP</span></div>Accounts Payable Co-Pilot</div>
+    <div class="pills"><span class="pill">Powered by Sarvam AI</span><span class="pill"><span class="dot"></span>ERP connected</span></div>
+  </nav>
+  <section class="hero">
+    <h1>Automated invoice processing and validation.</h1>
+    <p>Upload individual invoices or process in bulk. The system extracts data fields, cross-references with purchase orders, and provides actionable next steps.</p>
+  </section>
+  <div class="grid">
+    <div class="col">
+      <section class="card" aria-labelledby="h-up">
+        <div class="ch"><h2 id="h-up">Upload invoices</h2><small>Batch supported</small></div>
+        <div class="drop" id="drop-zone">
+          <input type="file" id="file-upload" accept=".pdf,application/pdf" multiple aria-label="Upload invoice PDFs">
+          <div class="orb"><b><svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 16V4m0 0L7 9m5-5l5 5M5 20h14"/></svg></b></div>
+          <h3>Drop invoice PDFs here</h3>
+          <p>or click to browse. Multiple files are processed in order.</p>
+          <div class="chips"><span class="chip">Field extraction</span><span class="chip">PO matching</span><span class="chip">Export</span></div>
+        </div>
+      </section>
+      <section class="card" aria-labelledby="h-log">
+        <div class="ch"><h2 id="h-log">System activity</h2><small>Live</small></div>
+        <div class="log" id="log" aria-live="polite"></div>
+      </section>
+      <section class="card" aria-labelledby="h-q">
+        <div class="ch"><h2 id="h-q">Processing queue</h2><small id="q-count"></small></div>
+        <ul class="q" id="queue"></ul>
+      </section>
+    </div>
+    <div class="col">
+      <div class="stats" id="stats"></div>
+      <section class="card" aria-labelledby="h-rep">
+        <div class="ch"><h2 id="h-rep">Validation report</h2><div class="acts" id="acts"></div></div>
+        <div id="report"></div>
+      </section>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const S={items:[],active:null,tab:'summary',running:false};let uid=0;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const label=k=>{const t=String(k).replace(/[_-]+/g,' ').replace(/([a-z])([A-Z])/g,'$1 $2').toLowerCase();return t.charAt(0).toUpperCase()+t.slice(1)};
+const fv=v=>v===null||v===undefined||v===''?'—':(typeof v==='object'?JSON.stringify(v):v);
+const kb=b=>b>1048576?(b/1048576).toFixed(1)+' MB':Math.max(1,Math.round(b/1024))+' KB';
+const tone=s=>{s=String(s).toUpperCase();return s.includes('APPROVED')?'ok':/REVIEW|HOLD|PENDING|MANUAL/.test(s)?'warn':'bad'};
+const toast=m=>{const t=$('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200)};
+const split=ex=>{const f={},l={};if(ex&&typeof ex==='object'&&!Array.isArray(ex))Object.entries(ex).forEach(([k,v])=>{if(Array.isArray(v)&&v.length&&v.every(x=>x&&typeof x==='object'&&!Array.isArray(x)))l[k]=v;else f[k]=v});return{f,l}};
+const score=ex=>{const{f}=split(ex),e=Object.values(f);return e.length?Math.round(e.filter(v=>v!==null&&v!==''&&v!==undefined).length/e.length*100):0};
+const cur=()=>S.items.find(i=>i.id===S.active);
+
+/* pipeline */
+const LINES=[['t','Reading document layout'],['t','Extracting vendor, dates and amounts'],['t','Reading line items and tax'],['t','Querying ERP for matching purchase order'],['t','Comparing amounts and quantities']];
+async function process(it){
+  it.state='processing';it.step=0;S.active=it.id;it.log=[['y','Uploading '+it.name]];render();
+  let n=0;const tm=setInterval(()=>{if(n<LINES.length){it.log.push(LINES[n]);it.step=Math.min(3,Math.floor((n+1)*.7));n++;render()}},1100);
+  try{
+    const fd=new FormData();fd.append('file',it.file);
+    const r=await fetch('/upload',{method:'POST',body:fd});const d=await r.json();
+    if(d.error)throw new Error(d.error);
+    it.data=d;it.state='done';it.log.push([tone(d.status)==='ok'?'g':tone(d.status)==='warn'?'y':'r','Verdict: '+d.status]);
+  }catch(e){it.state='error';it.err=e.message;it.log.push(['r','Failed: '+e.message])}
+  clearInterval(tm);it.step=4;render();
+}
+async function run(){if(S.running)return;S.running=true;let it;while((it=S.items.find(i=>i.state==='queued')))await process(it);S.running=false}
+function add(files){
+  let first=null;
+  [...files].forEach(f=>{
+    if(!(f.type==='application/pdf'||/\.pdf$/i.test(f.name))){toast(f.name+' skipped: PDF files only');return}
+    const it={id:++uid,name:f.name,size:f.size,file:f,url:URL.createObjectURL(f),state:'queued',step:0,log:[],data:null,err:null};
+    S.items.push(it);first=first||it;
+  });
+  if(first){S.tab='summary';render();run()}
+}
+
+/* render */
+function render(){renderStats();renderQueue();renderLog();renderReport()}
+function renderStats(){
+  const d=S.items.filter(i=>i.state==='done'),ok=d.filter(i=>tone(i.data.status)==='ok').length;
+  const fields=d.reduce((a,i)=>a+Object.keys(split(i.data.extracted_data).f).length,0);
+  const c=[[S.items.length,'Invoices this session'],[ok,'Approved'],[d.length-ok+S.items.filter(i=>i.state==='error').length,'Need attention'],[fields,'Fields extracted']];
+  $('stats').innerHTML=c.map(([n,l])=>`<div class="card stat"><b>${n}</b><span>${l}</span></div>`).join('');
+}
+function badge(i){
+  if(i.state==='queued')return'<span class="st wait">Queued</span>';
+  if(i.state==='processing')return'<span class="st run">Reading…</span>';
+  if(i.state==='error')return'<span class="st bad">Failed</span>';
+  const t=tone(i.data.status);return`<span class="st ${t}">${t==='ok'?'Approved':t==='warn'?'Review':'Flagged'}</span>`;
+}
+function renderQueue(){
+  $('q-count').textContent=S.items.length?S.items.length+' file'+(S.items.length>1?'s':''):'';
+  $('queue').innerHTML=S.items.length?S.items.slice().reverse().map(i=>`<li><button class="qi ${i.id===S.active?'on':''}" data-id="${i.id}"><div class="n"><b>${esc(i.name)}</b><small>${kb(i.size)}</small></div>${badge(i)}</button></li>`).join(''):'<li class="none">Processed invoices will be listed here.</li>';
+}
+function renderLog(){
+  const it=cur(),el=$('log');
+  if(!it){el.innerHTML='<div class="cur">Waiting for an invoice</div>';return}
+  el.innerHTML=it.log.map(([c,t],i)=>`<div class="ln"><span class="${c}">${c==='t'?'›':c==='g'?'✓':c==='r'?'✕':'●'}</span> ${esc(t)}</div>`).join('')+(it.state==='processing'?'<div class="cur"></div>':'');
+  el.scrollTop=el.scrollHeight;
+}
+function renderReport(){
+  const it=cur(),r=$('report');$('acts').innerHTML='';
+  if(!it){r.innerHTML=`<div class="rb"><div class="nd" style="width:max-content;margin-bottom:6px">No report yet</div></div><div class="feat">
+  <div><em>📄</em><b>Extracts invoice data</b><span>Automatically identifies vendors, dates, totals, and line items.</span></div>
+  <div><em>🔗</em><b>Verifies purchase orders</b><span>Cross-references extracted amounts with your ERP database.</span></div>
+  <div><em>⚡</em><b>Actionable outcomes</b><span>Categorizes results into approved, flagged, or pending review.</span></div>
+  <div><em>📦</em><b>Export data</b><span>Export validation results in JSON or CSV formats.</span></div></div>`;return}
+  if(it.state==='queued'||it.state==='processing'){
+    const N=['Read','Extract','Match PO','Verdict'];
+    r.innerHTML=`<div class="rb"><h4>${esc(it.name)}</h4><div class="pipe">${N.map((n,i)=>`<span class="nd ${i<it.step?'dn':i===it.step&&it.state==='processing'?'on':''}">${i<it.step?'✓':''} ${n}</span>${i<3?'<span class="ar">›</span>':''}`).join('')}</div>
+    <div class="sk" style="width:60%"></div><div class="sk"></div><div class="sk" style="width:80%"></div><div class="sk" style="width:45%"></div></div>`;return}
+  if(it.state==='error'){r.innerHTML=`<div class="eb"><b>Failed to process ${esc(it.name)}.</b><br>${esc(it.err)} Please verify the file and try again.</div>`;return}
+  const d=it.data,t=tone(d.status),{f,l}=split(d.extracted_data),sc=score(d.extracted_data),C=2*Math.PI*40;
+  $('acts').innerHTML='<button class="btn" data-a="json">Download JSON</button><button class="btn" data-a="csv">Download CSV</button><button class="btn" data-a="copy">Copy</button>';
+  const tabs=[['summary','Summary'],['fields','Fields'],['items','Line items'],['doc','Document'],['json','JSON']];
+  let body='';
+  if(S.tab==='summary')body=`<div class="vd ${t}"><div class="ring"><svg viewBox="0 0 96 96"><circle class="bg" cx="48" cy="48" r="40"/><circle class="fg" cx="48" cy="48" r="40" stroke-dasharray="${C}" stroke-dashoffset="${C*(1-sc/100)}"/></svg><div>${sc}%</div></div>
+    <div><h3>${esc(d.status)}</h3><p>${esc(d.message||'')}</p>${d.action?`<span class="act">${esc(d.action)}</span>`:''}<small>Ring shows how many extracted fields have a value.</small></div></div>
+    <div class="hl">${Object.entries(f).slice(0,6).map(([k,v])=>`<div><small>${esc(label(k))}</small><b>${esc(fv(v))}</b></div>`).join('')}</div>`;
+  if(S.tab==='fields')body=Object.keys(f).length?'<dl>'+Object.entries(f).map(([k,v])=>`<dt>${esc(label(k))}</dt><dd>${esc(fv(v))}</dd>`).join('')+'</dl>':'<p class="none">No fields were returned.</p>';
+  if(S.tab==='items')body=Object.keys(l).length?Object.entries(l).map(([k,rows])=>{const c=[...new Set(rows.flatMap(x=>Object.keys(x)))];return`<h4>${esc(label(k))}</h4><div class="sc"><table><thead><tr>${c.map(x=>`<th>${esc(label(x))}</th>`).join('')}</tr></thead><tbody>${rows.map(x=>`<tr>${c.map(y=>`<td>${esc(fv(x[y]))}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`}).join(''):'<p class="none">No line items were found in this invoice.</p>';
+  if(S.tab==='doc')body=`<iframe src="${it.url}" title="Invoice preview"></iframe>`;
+  if(S.tab==='json')body=`<pre>${esc(JSON.stringify(d.extracted_data,null,2))}</pre>`;
+  r.innerHTML=`<div class="rb"><div class="tabs" role="tablist">${tabs.map(([k,n])=>`<button class="tab ${S.tab===k?'on':''}" data-t="${k}">${n}</button>`).join('')}</div>${body}</div>`;
+}
+
+/* events */
+document.addEventListener('click',e=>{
+  const q=e.target.closest('[data-id]');if(q){S.active=+q.dataset.id;S.tab='summary';render();return}
+  const t=e.target.closest('[data-t]');if(t){S.tab=t.dataset.t;renderReport();return}
+  const a=e.target.closest('[data-a]');if(!a)return;
+  const it=cur(),ex=it.data.extracted_data,{f}=split(ex);
+  const dl=(n,txt,m)=>{const x=document.createElement('a');x.href=URL.createObjectURL(new Blob([txt],{type:m}));x.download=n;x.click()};
+  const base=it.name.replace(/\.pdf$/i,'');
+  if(a.dataset.a==='json')dl(base+'.json',JSON.stringify(ex,null,2),'application/json');
+  if(a.dataset.a==='csv'){const q=v=>'"'+String(fv(v)).replace(/"/g,'""')+'"';dl(base+'.csv','field,value\n'+Object.entries(f).map(([k,v])=>q(k)+','+q(v)).join('\n'),'text/csv')}
+  if(a.dataset.a==='copy')navigator.clipboard.writeText(JSON.stringify(ex,null,2)).then(()=>toast('Copied to clipboard'),()=>toast('Copy failed'));
+});
+const dz=$('drop-zone'),fu=$('file-upload');
+['dragover','dragenter'].forEach(v=>dz.addEventListener(v,e=>{e.preventDefault();dz.classList.add('over')}));
+['dragleave','drop'].forEach(v=>dz.addEventListener(v,()=>dz.classList.remove('over')));
+dz.addEventListener('drop',e=>{e.preventDefault();add(e.dataTransfer.files)});
+fu.addEventListener('change',e=>{add(e.target.files);fu.value=''});
+render();
+</script>
+</body>
+</html>
